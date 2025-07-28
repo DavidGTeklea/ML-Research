@@ -43,6 +43,24 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 - GPU Runtime: Pitt CRC interactive or batch jobs (`sbatch`)
 - HuggingFace access token required for LLaMA-2
 
+  This project runs across two environments:
+
+### LLM Scenario Generation (e.g. OpenAI or LLaMA-2)
+
+For Pitt CRC users running on a Jupyter OnDemand or interactive session:
+
+```bash
+# Load Python 3.11 with pip enabled
+module load python/ondemand-jupyter-python3.11
+
+# Install dependencies (into ~/.local/)
+python -m pip install --user \
+  transformers accelerate sentencepiece pandas openpyxl huggingface_hub openai==0.28 accelerate
+
+# Set your OpenAI API Key (replace with your own)
+export OPENAI_API_KEY="sk-WHATEVER-YOUR-KEY-IS
+```
+
 ### AMR Parser Installation
 
 Create a clean conda environment (Python 3.8) as recommended by the [Transition AMR Parser GitHub](https://github.com/sinantie/transition-amr-parser):
@@ -50,6 +68,14 @@ Create a clean conda environment (Python 3.8) as recommended by the [Transition 
 ```bash
 conda create -y -p ./amr_env python=3.8
 conda activate ./amr_env
+```
+
+```bash
+pip install transition-neural-parser
+
+# Required for CUDA acceleration
+pip install --no-index torch-scatter \
+   -f https://pytorch-geometric.com/whl/torch-1.13.1+cu117.html
 ```
 
 ## Usage
@@ -63,17 +89,6 @@ conda activate ./amr_env
     ```bash
     python run_amr_parser.py --input model_outputs.txt --output amr_graphs.txt
     ```
-
-3. Run plausibility scoring:
-    ```bash
-    python score_scenarios.py --input model_outputs.txt
-    ```
-
-4. Launch on Pitt CRC:
-    ```bash
-    sbatch batch_jobs/generate_verbs.slurm
-    ```
-
 ## Example Output
 
 - Scenario (for verb "whisper"):
