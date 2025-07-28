@@ -68,3 +68,34 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 ## Example Output
 
 - Scenario (for verb "whisper"):
+- Parsed Roles:
+- Agent: nurse
+- Patient: patient
+- Location: hospital room
+- Instrument: soft tone
+- Human Plausibility: 9.3/10
+- AMR Role Coverage: 4/4
+
+## 📊 Results
+
+- GPT-4o achieves the highest average plausibility (9.1) across verbs.
+- LLaMA-2 (13B) with quantization achieves competitive plausibility (8.7) at no API cost.
+- Average runtime per verb reduced by over 66% with optimized parallelization.
+
+## 📌 Future Work
+
+- Expand verb set to include light and phrasal verbs
+- Integrate image generation based on AMR graphs
+- Formalize annotation schema and increase annotator pool
+- Develop semantic fidelity metric beyond role count
+
+## 👨‍🔬 Credits
+
+Research by **David Teklea**  
+Advised by Dr. Lorraine Li  
+University of Pittsburgh, Summer 2025  
+Project support via Pitt CRC & OpenAI API
+
+---
+
+
