@@ -5,7 +5,7 @@ This repo organizes the files that I run on Pitt CRC's cluster and is related to
 
 This project explores how Large Language Models (LLMs) generate plausible event-based scenarios for a curated set of verbs, with a focus on both scalability and semantic consistency. We integrate OpenAI and Llama-2 models with AMR parsing to assess the quality of generated outputs against human annotators.
 
-## 🚀 Features
+## Features
 
 - **End-to-End Pipeline**: Automates the process of:
   - Loading verbs from structured spreadsheets
@@ -21,14 +21,13 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 
 - **Quantitative Evaluation**:
   - Numerical plausibility scores (1–10 scale)
-  - Human annotation agreement rate of **~92%**
   - Verb-wise plausibility statistics for model benchmarking
 
 - **Semantic Validation via AMR**:
   - Parses LLM outputs to assess presence of agent, patient, location, and instrument
   - Compares parser coverage to expected semantic roles per verb
 
-## 🧠 Models Used
+## Models Used
 
 | Model       | Role                                      |
 |-------------|-------------------------------------------|
@@ -66,6 +65,6 @@ This project explores how Large Language Models (LLMs) generate plausible event-
     sbatch batch_jobs/generate_verbs.slurm
     ```
 
-## 📈 Example Output
+## Example Output
 
 - Scenario (for verb "whisper"):
