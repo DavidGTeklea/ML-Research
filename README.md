@@ -35,7 +35,7 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 | LLaMA-2 (13B, quantized) | Open-source scenario generation  |
 | IBM Transition AMR Parser | Semantic role extraction        |
 
-## 🛠 Setup
+## Setup
 
 - Python 3.11+
 - Dependencies:
@@ -76,24 +76,22 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 - Human Plausibility: 9.3/10
 - AMR Role Coverage: 4/4
 
-## 📊 Results
+## Results
 
 - GPT-4o achieves the highest average plausibility (9.1) across verbs.
-- LLaMA-2 (13B) with quantization achieves competitive plausibility (8.7) at no API cost.
 - Average runtime per verb reduced by over 66% with optimized parallelization.
 
-## 📌 Future Work
+## Future Work
 
-- Expand verb set to include light and phrasal verbs
-- Integrate image generation based on AMR graphs
+- Expand verb set to include less plausible scenarios
 - Formalize annotation schema and increase annotator pool
 - Develop semantic fidelity metric beyond role count
 
-## 👨‍🔬 Credits
+Credits
 
 Research by **David Teklea**  
 Advised by Dr. Lorraine Li  
-University of Pittsburgh, Summer 2025  
+University of Pittsburgh, Summer 2025 to present Day  
 Project support via Pitt CRC & OpenAI API
 
 ---
