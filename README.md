@@ -56,12 +56,12 @@ conda activate ./amr_env
 
 1. Generate scenarios:
     ```bash
-    python generate_scenarios.py --verbs verb_list.csv --model gpt-4o
+    python generate_scenarios.py --verbs verb_list.csv (optional argument)
     ```
 
 2. Run AMR parsing:
     ```bash
-    python run_amr_parser.py --input model_outputs.txt --output amr_graphs.txt
+    python run_amr_parser.py 
     ```
 
 3. Run plausibility scoring:
