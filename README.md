@@ -43,7 +43,16 @@ This project explores how Large Language Models (LLMs) generate plausible event-
 - GPU Runtime: Pitt CRC interactive or batch jobs (`sbatch`)
 - HuggingFace access token required for LLaMA-2
 
-## 🖥 Usage
+### AMR Parser Installation
+
+Create a clean conda environment (Python 3.8) as recommended by the [Transition AMR Parser GitHub](https://github.com/sinantie/transition-amr-parser):
+
+```bash
+conda create -y -p ./amr_env python=3.8
+conda activate ./amr_env
+```
+
+## Usage
 
 1. Generate scenarios:
     ```bash
