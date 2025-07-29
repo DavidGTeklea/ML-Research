@@ -10,24 +10,36 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 sent_file = sys.argv[1]
-with open(sent_file, 'r', encoding='utf-8') as f:
-    for line in f:
+output_file = sent_file.rsplit('.', 1)[0] + '_amr_output.txt'
+
+with open(sent_file, 'r', encoding='utf-8') as f_in, open(output_file, 'w', encoding='utf-8') as f_out:
+    for line in f_in:
         sentence = line.strip()
         if not sentence:
             continue
+
+        f_out.write(f"\nSentence: {sentence}\n")
         print(f"\nSentence: {sentence}")
         try:
             tokens, _ = amr_parser.tokenize(sentence)
             annots, machines = amr_parser.parse_sentence(tokens)
             amr_graph = machines.get_amr().to_penman(jamr=False, isi=True)
+
+            f_out.write(amr_graph + "\n")
             print(amr_graph)
-            # detect roles
+
             roles = {
                 "Agent":      ":ARG0" in amr_graph,
                 "Patient":    ":ARG1" in amr_graph,
                 "Instrument": ":instrument" in amr_graph,
                 "Location":   ":location" in amr_graph,
             }
-            print("Roles present:", roles)
+
+            role_str = f"Roles present: {roles}\n"
+            f_out.write(role_str)
+            print(role_str, end='')
+
         except Exception as e:
-            print(f"Error parsing '{sentence}': {e}")
+            err_msg = f"Error parsing '{sentence}': {e}\n"
+            f_out.write(err_msg)
+            print(err_msg)
