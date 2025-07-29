@@ -87,7 +87,7 @@ pip install --no-index torch-scatter \
 
 2. Run AMR parsing:
     ```bash
-    python run_amr_parser.py 
+    python parse_amr_sentences.py generated_sentences.txt 
     ```
 ## Example Output
 
