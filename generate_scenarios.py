@@ -31,10 +31,19 @@ def build_prompt(verb, roles):
         )
     body = "\n\n".join(blocks)
     return f"""
-For the verb \"{verb}\", list exactly five distinct scenarios, each with unique {roles_list}. Use this format:
-
+For the verb \"{verb}\", list exactly five distinct very common scenarios, each with unique roles such as {roles_list}. 
+Each sentence must use the verb "\{verb}\" in its inflected verbal form, not as a noun. 
+The verb must function as the main action of the sentence (e.g., “The samurai bowed...” is acceptable, but “The butler gave a bow...”  is not). 
+Do not use any construction that turns the verb into a noun.
+Use this format:
 {body}
-
+Some roles that may be used include agent (who/what performs the action; must be specific and unique across examples), 
+patient (who/what is the recipient of the action; must differ in each case), 
+instrument (the means of performing the action), and 
+location (where/direction of the action).
+Each scenario sentence must include the exact verb \"{verb}\" as a standalone word in the sentence. Do not use a synonym (e.g., “pirouette” for “dance”). 
+Avoid descriptive adjectives. 
+Avoid repeating agents and avoid generic terms (e.g., "thing," "place")—opt for vivid details.
 Finally, state which scenario (1–5) is best, explain why, provide a 1–10 rating for each, and compute the average rating.
 """.strip()
 
