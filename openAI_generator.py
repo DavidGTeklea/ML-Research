@@ -43,6 +43,13 @@ For the verb "{verb}", list exactly five distinct scenarios, each with unique {r
 
 {block}
 
+Some roles that may be used include agent (who/what performs the action; must be specific and unique across examples), 
+patient (who/what is the recipient of the action; must differ in each case), 
+instrument (the means of performing the action), and 
+location (where/direction of the action).
+Each scenario sentence must include the exact verb \"{verb}\" as a standalone word in the sentence. Do not use a synonym (e.g., “pirouette” for “dance”). 
+Avoid descriptive adjectives. 
+Avoid repeating agents and avoid generic terms (e.g., "thing," "place")—opt for vivid details.
 Finally, state which scenario number (1–5) is best and explain why. A number rating from a scale of 1-10 
 should be given to each scenario, and there should be an average among the 5 scenarios for each verb. 
 The rating should be done in reference to plausaibility of scenario, as well as whether the roles (agent, location, patient, instrument) are 
