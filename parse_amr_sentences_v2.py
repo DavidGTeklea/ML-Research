@@ -1,108 +1,147 @@
-import sys
-import json
-from transition_amr_parser.parse import AMRParser
+# parse_amr_sentences_v2_debug.py  (no f-strings)
+# RUn this by saying python -u parse_amr_sentences_v2.py extracted_sentences_with_verbs.txt 2>&1 | tee amr_run.log to also get error logs
+import sys, os, traceback
 import penman
-import re 
+from transition_amr_parser.parse import AMRParser
+
+def parse_line(line):
+    if "|" not in line:
+        return None, None
+    verb, sent = line.split("|", 1)
+    return verb.strip(), sent.strip()
 
 def is_animate_heuristic(word):
-    animate_keywords = {
-        "man", "woman", "child", "soldier", "person", "teacher", "doctor", "boy", "girl",
-        "agent", "nurse", "student", "officer", "mother", "father", "adult", "human"
-    }
-    return word.lower() in animate_keywords
+    return bool(word) and word.lower() in set([
+        "man","woman","child","soldier","person","teacher","doctor","boy","girl",
+        "agent","nurse","student","officer","mother","father","adult","human"
+    ])
 
-def fallback_roles_recursive(amr_graph_str):
+def roles_from_amr(amr_graph_str):
+    roles = {"Agent": False, "Patient": False, "Instrument": False, "Location": False}
     g = penman.decode(amr_graph_str)
-    roles_present = {
-        "Agent": False,
-        "Patient": False,
-        "Instrument": False,
-        "Location": False
-    }
 
-    # Build var → concept map and var → edges
-    var_to_concept = {}
-    edges = {}
-
-    for src, rel, tgt in g.triples:
-        if rel == ":instance":
-            var_to_concept[src] = tgt
+    var2concept, edges = {}, {}
+    for s, r, t in g.triples:
+        if r == ":instance":
+            var2concept[s] = t
         else:
-            edges.setdefault(src, []).append((rel, tgt))
+            edges.setdefault(s, []).append((r, t))
 
-    # First pass: direct roles
-    for src, role, tgt in g.triples:
-        if role == ":ARG0":
-            roles_present["Agent"] = True
-        elif role == ":ARG1":
-            roles_present["Patient"] = True
-        elif role == ":instrument":
-            roles_present["Instrument"] = True
-        elif role == ":location":
-            roles_present["Location"] = True
+    for _, r, _ in g.triples:
+        if r == ":ARG0": roles["Agent"] = True
+        elif r == ":ARG1": roles["Patient"] = True
+        elif r == ":instrument": roles["Instrument"] = True
+        elif r == ":location": roles["Location"] = True
 
-    # Fallback agent detection using recursive search
-    def recurse_ARG1_chain(var, depth=0, visited=None):
-        if visited is None:
-            visited = set()
-        if var in visited or depth > 4:
+    def dfs_ARG1_chain(var, depth, seen):
+        if var in seen or depth > 4:
             return False
-        visited.add(var)
-
-        concept = var_to_concept.get(var, "")
+        seen.add(var)
+        concept = var2concept.get(var, "")
         if is_animate_heuristic(concept):
-            print(f"Fallback: treating '{concept}' as Agent (depth={depth})")
             return True
-
         for rel, tgt in edges.get(var, []):
-            if rel == ":ARG1" and tgt in var_to_concept:
-                if recurse_ARG1_chain(tgt, depth + 1, visited):
+            if rel == ":ARG1" and tgt in var2concept:
+                if dfs_ARG1_chain(tgt, depth + 1, seen):
                     return True
         return False
 
-    if not roles_present["Agent"]:
-        root_var = g.triples[0][0]  # usually the top concept's variable
-        if recurse_ARG1_chain(root_var):
-            roles_present["Agent"] = True
+    if not roles["Agent"] and g.triples:
+        root_var = g.triples[0][0]
+        if dfs_ARG1_chain(root_var, 0, set()):
+            roles["Agent"] = True
+    return roles
 
-    return roles_present
+def main():
+    try:
+        print("[BOOT] __name__ = {}".format(__name__)); sys.stdout.flush()
+        print("[BOOT] argv = {}".format(sys.argv)); sys.stdout.flush()
+        print("[BOOT] CWD  = {}".format(os.getcwd())); sys.stdout.flush()
 
+        if len(sys.argv) < 2:
+            print("Usage: python parse_amr_sentences_v2_debug.py <verb_sentence_file>"); sys.stdout.flush()
+            sys.exit(1)
 
+        in_path = sys.argv[1]
+        print("[INFO] Input (given): {}".format(in_path)); sys.stdout.flush()
+        in_abs = os.path.abspath(in_path)
+        print("[INFO] Input (abs)  : {}".format(in_abs)); sys.stdout.flush()
+        if not os.path.exists(in_path):
+            print("[ERROR] Input file not found."); sys.stdout.flush()
+            sys.exit(2)
 
-# Initialize the AMR parser
-amr_parser = AMRParser.from_pretrained('AMR3-structbart-L')
+        out_path = in_path.rsplit(".", 1)[0] + "_amr_detector_output.txt"
+        out_abs = os.path.abspath(out_path)
+        print("[INFO] Output (abs) : {}".format(out_abs)); sys.stdout.flush()
 
-if len(sys.argv) != 2:
-    print("Usage: python parse_amr_sentences.py <sentences_file>")
-    sys.exit(1)
+        # Create/clear output immediately so you can `ls` it
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write("[RUN-START]\n")
+        print("[INFO] Output file created/cleared."); sys.stdout.flush()
 
-sent_file = sys.argv[1]
-output_file = sent_file.rsplit('.', 1)[0] + '_amr_output_v2.txt'
+        print("[INFO] Loading AMR model AMR3-structbart-L ..."); sys.stdout.flush()
+        parser = AMRParser.from_pretrained("AMR3-structbart-L")
+        print("[INFO] Model loaded."); sys.stdout.flush()
 
-with open(sent_file, 'r', encoding='utf-8') as f_in, open(output_file, 'w', encoding='utf-8') as f_out:
-    for line in f_in:
-        sentence = line.strip()
-        if not sentence:
-            continue
+        total = 0; written = 0; skipped = 0
 
-        f_out.write(f"\nSentence: {sentence}\n")
-        print(f"\nSentence: {sentence}")
+        with open(in_path, "r", encoding="utf-8") as fin, \
+             open(out_path, "a", encoding="utf-8") as fout:
+
+            for raw in fin:
+                raw = raw.strip()
+                if not raw:
+                    continue
+                total += 1
+                verb, sentence = parse_line(raw)
+                if not verb or not sentence:
+                    skipped += 1
+                    fout.write("\n[SKIP] Malformed line: {}\n".format(raw))
+                    continue
+
+                if total % 25 == 0:
+                    print("[INFO] processed {} lines...".format(total)); sys.stdout.flush()
+
+                try:
+                    tokens, _ = parser.tokenize(sentence)
+                    annots, machines = parser.parse_sentence(tokens)
+                    amr_penman = machines.get_amr().to_penman(jamr=False, isi=True)
+                    roles = roles_from_amr(amr_penman)
+
+                    fout.write("==== Verb: {} ====\n".format(verb))
+                    fout.write("Sentence: {}\n".format(sentence))
+                    fout.write("Detector: AMR\n")
+                    fout.write("Agent: {}\n".format(roles["Agent"]))
+                    fout.write("Patient: {}\n".format(roles["Patient"]))
+                    fout.write("Instrument: {}\n".format(roles["Instrument"]))
+                    fout.write("Location: {}\n".format(roles["Location"]))
+                    fout.write("AMR:\n{}\n\n".format(amr_penman))
+                    written += 1
+
+                except Exception as e:
+                    fout.write("==== Verb: {} ====\n".format(verb))
+                    fout.write("Sentence: {}\n".format(sentence))
+                    fout.write("Detector: AMR\n")
+                    fout.write("Agent: False\nPatient: False\nInstrument: False\nLocation: False\n")
+                    fout.write("[ERROR] {}\n\n".format(e))
+
+        print("[DONE] Lines read: {}, written: {}, skipped: {}.".format(total, written, skipped)); sys.stdout.flush()
+        print("[DONE] Output saved to: {}".format(out_abs)); sys.stdout.flush()
+
+    except Exception:
+        tb = traceback.format_exc()
+        # make sure you see the failure even if stdout is buffered by the environment
         try:
-            tokens, _ = amr_parser.tokenize(sentence)
-            annots, machines = amr_parser.parse_sentence(tokens)
-            amr_graph = machines.get_amr().to_penman(jamr=False, isi=True)
+            sys.stderr.write(tb + "\n"); sys.stderr.flush()
+        except Exception:
+            pass
+        # also dump it into the output file if we already made it
+        try:
+            with open(out_path, "a", encoding="utf-8") as f:
+                f.write("\n[CRASH]\n{}\n".format(tb))
+        except Exception:
+            pass
+        raise
 
-            f_out.write(amr_graph + "\n")
-            print(amr_graph)
-            
-            roles = fallback_roles_recursive(amr_graph)
-            
-            role_str = f"Roles present: {roles}\n"
-            f_out.write(role_str)
-            print(role_str, end='')
-
-        except Exception as e:
-            err_msg = f"Error parsing '{sentence}': {e}\n"
-            f_out.write(err_msg)
-            print(err_msg)
-
+if __name__ == "__main__":
+    main()
