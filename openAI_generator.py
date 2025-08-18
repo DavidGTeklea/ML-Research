@@ -40,7 +40,12 @@ Some roles that may be used include agent (who/what performs the action; must be
 patient (who/what is the recipient of the action; must differ in each case), 
 instrument (the means of performing the action), and 
 location (where/direction of the action).
-Each scenario sentence must include the exact verb "{verb}" as a standalone word in the sentence. Do not use a synonym (e.g., “pirouette” for “dance”). 
+Each scenario sentence must include the exact verb "{verb}" as a standalone word in the sentence. 
+Each scenario must only have 1 verb, and it must be the verb {verb} (e.g. "Alex grabbed his surfboard and headed out to ride the waves in the ocean." is unacceptable).
+Another BAD SCENARIO: The home cook grates nutmeg to enhance the flavor.   # contains "grates" + "enhance"
+Do not use a synonym for the verb (e.g., “pirouette” for “dance”). 
+Do not nomalize verbs (e.g. "She didn't get much sleep last night is bad" for "She tried poorly to sleep last night").
+Do not use phrasal/compound variants (e.g., if {verb} = “sleep”, do not produce “fall asleep,” “oversleep,” “sleep in”).
 Avoid descriptive adjectives. 
 Avoid repeating agents and avoid generic terms (e.g., "thing," "place")—opt for vivid details.
 Finally, state which scenario number (1–5) is best and explain why. A number rating from a scale of 1–10 
