@@ -13,8 +13,8 @@ if not openai.api_key:
 # Predefined list of supported CSV files
 INPUT_FILES = {
     "agent_location": r"/ix1/xli/dgt12/AgentLocation51.csv",
-    "agent_instrument": r"/ix1/xli/dgt12/AgentLocationInstrument5.csv",
-    "agent_patient": r"/ix1/xli/dgt12/AgentLocationPatient61.csv",
+    "agent_location_instrument": r"/ix1/xli/dgt12/AgentLocationInstrument5.csv",
+    "agent_location_patient": r"/ix1/xli/dgt12/AgentLocationPatient61.csv",
     "all_roles": r"/ix1/xli/dgt12/all_roles60.csv",
 }
 
@@ -44,28 +44,50 @@ args = parser.parse_args()
 def build_prompt(verb, roles):
     roles_list = ", ".join(roles)
     return f"""
-For the verb "{verb}", list exactly five distinct, prototypical scenarios encountered in everyday life, each with unique {roles_list}. 
-Use this format:
+    
+You are generating role-based scenarios. Follow this structure exactly.
 
-<number>. Agent: <agent>; Patient: <patient>; Instrument: <instrument>; Location: <location>
-Sentence: "<a sentence that includes all above roles>"
+==== Verb: cut ====
+1. Agent: chef; Patient: carrots; Instrument: sharp knife; Location: restaurant kitchen
+Sentence: "The chef is cutting the carrots with a sharp knife in the restaurant kitchen."
+Rating: 9/10
 
-Some roles that may be used include agent (who/what performs the action; must be specific and unique across examples), 
-patient (who/what is the recipient of the action; must differ in each case), 
-instrument (the means of performing the action), and 
-location (where/direction of the action).
-Each scenario sentence must include the exact verb "{verb}" as a standalone word in the sentence. 
-Each scenario must only have 1 verb, and it must be the verb {verb} (e.g. "Alex grabbed his surfboard and headed out to ride the waves in the ocean." is unacceptable).
-Another BAD SCENARIO: The home cook grates nutmeg to enhance the flavor.   # contains "grates" + "enhance"
-Do not use a synonym for the verb (e.g., “pirouette” for “dance”). 
-Do not nomalize verbs (e.g. "She didn't get much sleep last night is bad" for "She tried poorly to sleep last night").
-Do not use phrasal/compound variants (e.g., if {verb} = “sleep”, do not produce “fall asleep,” “oversleep,” “sleep in”).
-Avoid descriptive adjectives. 
-Avoid repeating agents and avoid generic terms (e.g., "thing," "place")—opt for vivid details.
-Finally, state which scenario number (1–5) is best and explain why. A number rating from a scale of 1–10 
-should be given to each scenario, and there should be an average among the 5 scenarios for each verb. 
-The rating should be done in reference to plausibility of scenario, as well as whether the roles (agent, location, patient, instrument) are 
-actually being used in the scenario generation.
+2. Agent: barber; Patient: customer's hair; Instrument: stainless steel scissors; Location: barbershop
+Sentence: "The barber is cutting the customer's hair in the barbershop with stainless steel scissors."
+Rating: 9/10
+
+3. Agent: tailor; Patient: blue fabric; Instrument: fabric shears; Location: sewing studio
+Sentence: "The tailor is cutting the blue fabric in the sewing studio with fabric shears."
+Rating: 8/10
+
+4. Agent: gardener; Patient: rose bushes; Instrument: pruning shears; Location: backyard garden
+Sentence: "The gardener is cutting the rose bushes with pruning shears in the backyard garden."
+Rating: 8/10
+
+5. Agent: surgeon; Patient: abdominal tissue; Instrument: surgical scalpel; Location: operating room
+Sentence: "The surgeon is cutting the abdominal tissue in the operating room with a surgical scalpel."
+Rating: 9/10
+
+Best scenario: 5  
+Average rating: 8.6/10  
+---
+
+Now, for the verb "{verb}", create **exactly 5 distinct, everyday scenarios**, each with unique {roles_list}.
+
+Roles:
+- **Agent** (who/what performs the action; must be specific and unique across examples; DO NOT use proper names)
+- **Patient** (who/what is the recipient of the action; must differ in each case)
+- **Instrument** (the means of performing the action)
+- **Location** (always include a **setting location**, typically introduced by 'in', 'at', or 'on'; not just a target location)
+
+**Rules:**
+- Each sentence must contain **only the verb "{verb}" in progressive form** (one simple verb, do not use synonyms of "{verb}", do not use two verbs in the same clause).
+- **No phrasal/compound verbs** (e.g., "fish for", "cut out," "cut off").
+- Avoid nominalization (e.g. "She didn't get much sleep last night" is bad; say instead "She is sleeping poorly").
+- Use vivid, concrete nouns; avoid vague adjectives.
+- Sentence must include **{roles_list}**.
+- After listing, rate each scenario 1–10, state best scenario number, and give average score.
+
 """
 
 # ==== Determine role set ====
