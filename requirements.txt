@@ -1,0 +1,11 @@
+# Pin legacy OpenAI client to match your code
+openai==0.28.1
+
+# Data handling
+pandas>=2.2.0
+openpyxl>=3.1.2   # needed for .xlsx
+xlrd==1.2.0       # only if you actually have legacy .xls files
+
+# Optional QoL if you use them (safe to omit if unused)
+tqdm>=4.66.0
+python-dotenv>=1.0.1
