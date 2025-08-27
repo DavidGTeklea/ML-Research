@@ -45,34 +45,9 @@ def build_prompt(verb, roles):
     roles_list = ", ".join(roles)
     return f"""
     
-You are generating role-based scenarios. Follow this structure exactly.
+You are generating role-based scenarios. 
 
-==== Verb: cut ====
-1. Agent: chef; Patient: carrots; Instrument: sharp knife; Location: restaurant kitchen
-Sentence: "The chef is cutting the carrots with a sharp knife in the restaurant kitchen."
-Rating: 9/10
-
-2. Agent: barber; Patient: customer's hair; Instrument: stainless steel scissors; Location: barbershop
-Sentence: "The barber is cutting the customer's hair in the barbershop with stainless steel scissors."
-Rating: 9/10
-
-3. Agent: tailor; Patient: blue fabric; Instrument: fabric shears; Location: sewing studio
-Sentence: "The tailor is cutting the blue fabric in the sewing studio with fabric shears."
-Rating: 8/10
-
-4. Agent: gardener; Patient: rose bushes; Instrument: pruning shears; Location: backyard garden
-Sentence: "The gardener is cutting the rose bushes with pruning shears in the backyard garden."
-Rating: 8/10
-
-5. Agent: surgeon; Patient: abdominal tissue; Instrument: surgical scalpel; Location: operating room
-Sentence: "The surgeon is cutting the abdominal tissue in the operating room with a surgical scalpel."
-Rating: 9/10
-
-Best scenario: 5  
-Average rating: 8.6/10  
----
-
-Now, for the verb "{verb}", create **exactly 5 distinct, everyday scenarios**, each with unique {roles_list}.
+For the verb "{verb}", create **exactly 5 distinct, everyday scenarios**, each with unique {roles_list}.
 
 Roles:
 - **Agent** (who/what performs the action; must be specific and unique across examples; DO NOT use proper names)
@@ -84,16 +59,35 @@ Roles:
 - Each sentence must contain **only the verb "{verb}" in progressive form** (one simple verb, do not use synonyms of "{verb}", do not use two verbs in the same clause).
 - **No phrasal/compound verbs** (e.g., "fish for", "cut out," "cut off").
 - Avoid nominalization (e.g. "She didn't get much sleep last night" is bad; say instead "She is sleeping poorly").
-- Use vivid, concrete nouns; avoid vague adjectives.
+- Write each scenario so it could be turned directly into an illustration or photo. Use concrete, imageable details (colors, textures, objects) and avoid vague language.
 - Sentence must include **{roles_list}**.
-- After listing, rate each scenario 1–10, state best scenario number, and give average score.
+
+Follow this structure exactly.
+
+==== Verb: cut ====
+1. Agent: chef; Patient: carrots; Instrument: sharp knife; Location: restaurant kitchen
+Sentence: "The chef is cutting the carrots with a sharp knife at the restaurant kitchen."
+
+2. Agent: barber; Patient: customer's hair; Instrument: stainless steel scissors; Location: barbershop
+Sentence: "At the barbershop, the barber is cutting the customer's hair with stainless steel scissors."
+
+3. Agent: tailor; Patient: blue fabric; Instrument: fabric shears; Location: sewing studio
+Sentence: "The tailor is cutting the blue fabric with fabric shears in the sewing studio."
+
+4. Agent: gardener; Patient: rose bushes; Instrument: pruning shears; Location: backyard garden
+Sentence: "The gardener is cutting the rose bushes with pruning shears on the backyard patio."
+
+5. Agent: surgeon; Patient: abdominal tissue; Instrument: surgical scalpel; Location: operating room
+Sentence: "In the operating room, the surgeon is cutting the abdominal tissue with a surgical scalpel."
+
+---
 
 """
 
 # ==== Determine role set ====
-if args.file == "agent_instrument":
+if args.file == "agent_location_instrument":
     roles = ["Agent", "Instrument", "Location"]
-elif args.file == "agent_patient":
+elif args.file == "agent_location_patient":
     roles = ["Agent", "Patient", "Location"]
 elif args.file == "all_roles":
     roles = ["Agent", "Patient", "Instrument", "Location"]
