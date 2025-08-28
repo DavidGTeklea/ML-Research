@@ -5,8 +5,8 @@ import re
 
 INPUT_FILES = [
     "verb_outputs_all_roles.txt",
-    "verb_outputs_agent_patient.txt",
-    "verb_outputs_agent_instrument.txt",
+    "verb_outputs_agent_location_patient.txt",
+    "verb_outputs_agent_location_instrument.txt",
     "verb_outputs_agent_location.txt",
 ]
 
@@ -50,3 +50,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as fout:
                 fout.write("\n".join(current_block) + "\n\n")
 
 print(f"[DONE] Scenarios with roles written to {OUTPUT_FILE}")
+
