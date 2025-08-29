@@ -16,8 +16,8 @@ if not openai.api_key:
 # Predefined list of supported CSV files
 INPUT_FILES = {
     "agent_location": r"./AgentLocation51.csv",
-    "agent_instrument": r"./AgentLocationInstrument5.csv",
-    "agent_patient": r"./AgentLocationPatient61.csv",
+    "agent_location_instrument": r"./AgentLocationInstrument5.csv",
+    "agent_location_patient": r"./AgentLocationPatient61.csv",
     "all_roles": r"./all_roles60.csv",
 }
 
