@@ -12,10 +12,10 @@ if not openai.api_key:
 
 # Predefined list of supported CSV files
 INPUT_FILES = {
-    "agent_location": r"/ix1/xli/dgt12/AgentLocation51.csv",
-    "agent_location_instrument": r"/ix1/xli/dgt12/AgentLocationInstrument5.csv",
-    "agent_location_patient": r"/ix1/xli/dgt12/AgentLocationPatient61.csv",
-    "all_roles": r"/ix1/xli/dgt12/all_roles60.csv",
+    "agent_location": r"./AgentLocation51.csv",
+    "agent_location_instrument": r"./AgentLocationInstrument5.csv",
+    "agent_location_patient": r"./AgentLocationPatient61.csv",
+    "all_roles": r"./all_roles60.csv",
 }
 
 # ==== CLI Arguments ====
