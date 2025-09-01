@@ -13,10 +13,10 @@ if not openai.api_key:
 
 # Predefined input CSVs
 INPUT_FILES = {
-    "agent_location": "/ix1/xli/dgt12/AgentLocation51.csv",
-    "agent_instrument": "/ix1/xli/dgt12/AgentLocationInstrument5.csv",
-    "agent_patient": "/ix1/xli/dgt12/AgentLocationPatient61.csv",
-    "all_roles": "/ix1/xli/dgt12/all_roles60.csv",
+    "agent_location": "./AgentLocation51.csv",
+    "agent_location_instrument": "./AgentLocationInstrument5.csv",
+    "agent_location_patient": "./AgentLocationPatient61.csv",
+    "all_roles": "./all_roles60.csv",
 }
 
 # Prompt builder
@@ -69,8 +69,8 @@ def main():
             verbs = df.iloc[1:, 0].dropna().astype(str).tolist()
 
             roles = {
-                "agent_instrument": ["Agent","Instrument","Location"],
-                "agent_patient":    ["Agent","Patient","Location"],
+                "agent_location_instrument": ["Agent","Instrument","Location"],
+                "agent_location_patient":    ["Agent","Patient","Location"],
                 "all_roles":        ["Agent","Patient","Instrument","Location"],
             }.get(key, ["Agent","Location"])
 
