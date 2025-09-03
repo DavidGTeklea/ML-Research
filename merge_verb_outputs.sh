@@ -8,7 +8,7 @@ OUT_DIR="${2:-outputs}"
 
 mkdir -p "$OUT_DIR"
 
-keys=(agent_location agent_instrument agent_patient all_roles)
+keys=(agent_location agent_location_instrument agent_location_patient all_roles)
 
 for key in "${keys[@]}"; do
   # Grab matching chunk files, sort by the numeric chunk id
